@@ -222,4 +222,8 @@ add_dependencies(imu_odom_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 target_link_libraries(imu_odom_node ${catkin_LIBRARIES})
 
 
+add_executable(imu_wheel_odom_node src/imu_wheel_odom_node.cpp)
+add_dependencies(imu_wheel_odom_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(imu_wheel_odom_node ${catkin_LIBRARIES})
+
 

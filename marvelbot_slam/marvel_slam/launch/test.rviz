@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -63,9 +63,11 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        laser_frame:
+        base_scan:
           Value: true
-        map:
+        imu_base:
+          Value: true
+        imu_link:
           Value: true
         odom:
           Value: true
@@ -75,11 +77,13 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                laser_frame:
+        odom:
+          base_footprint:
+            base_link:
+              base_scan:
+                {}
+              imu_base:
+                imu_link:
                   {}
       Update Interval: 0
       Value: true
@@ -127,7 +131,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:

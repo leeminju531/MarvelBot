@@ -12,6 +12,7 @@ from geometry_msgs.msg import Twist
 import sys, select, termios, tty
 
 msg = """
+note : modified publisher topic message : motorControl/cmd_vel 
 Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
@@ -70,7 +71,7 @@ speedBindings={
 class PublishThread(threading.Thread):
     def __init__(self, rate):
         super(PublishThread, self).__init__()
-        self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size = 1)
+        self.publisher = rospy.Publisher('motorControl/cmd_vel', Twist, queue_size = 1)
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
