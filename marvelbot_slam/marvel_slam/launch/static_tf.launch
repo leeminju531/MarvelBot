@@ -1,10 +1,20 @@
  <launch>
     
             <!-- imu node -->
-     <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" /> 
+     <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" >
+     <!--note : port value is your imu port -->
+     <param name="port" type="string" value="/dev/ttyACM0"/>
+     </node>
 
-	<!--rosserial node -->
+        	<!--rosserial node for motor on Arduino-->  
+     <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+     <!-- note : port value is your motor on arduino port -->
+     <param name="port" value="/dev/ttyACM1"/>
+     </node>
 
+
+          <!-- motor node -->
+     <node pkg="motor_ctrl" type="motor_ctrl_node" name="motor_ctrl_node"/>
 
 
  	          <!-- odom node-->
