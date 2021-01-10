@@ -22,7 +22,7 @@ void twistCB(const geometry_msgs::Twist &msg){
 int main(int argc, char **argv){
     ros::init(argc, argv, "odom_node");
     ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("marvel/vel", 10, twistCB);
+    ros::Subscriber sub = n.subscribe("marvel/cmd_vel", 10, twistCB);
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("marvel/wheel/odom", 10);
     tf2_ros::TransformBroadcaster br;
 

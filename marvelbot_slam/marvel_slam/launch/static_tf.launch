@@ -3,10 +3,14 @@
             <!-- imu node -->
      <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" /> 
 
+	<!--rosserial node -->
+
+
+
  	          <!-- odom node-->
    
-    <node pkg="tf_broadcaster" type="odom_node" name="link0_broadcaster" />
-    <node pkg="tf_broadcaster" type="temp_motor_node" name="temp_broadcaster" /> 
+    <node pkg="marvel_slam" type="odom_node" name="link0_broadcaster" />
+    <node pkg="marvel_slam" type="temp_motor_node" name="temp_broadcaster" /> 
 
             <!-- lidar node --> 
     <node name="ydlidar_node"  pkg="ydlidar_ros"  type="ydlidar_node"  respawn="false" >
@@ -36,7 +40,7 @@
     
     
     <!-- rviz setting -->
-    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find tf_broadcaster)/launch/test.rviz" />
+    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_slam)/launch/test.rviz" />
   
     
     <!-- gmapping setting -->

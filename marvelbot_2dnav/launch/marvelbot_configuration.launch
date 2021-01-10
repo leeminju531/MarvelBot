@@ -20,8 +20,8 @@
   </node>--> 
   
    	          <!-- odom node-->
-    <node pkg="tf_broadcaster" type="odom_node" name="link0_broadcaster" />
-    <node pkg="tf_broadcaster" type="temp_motor_node" name="temp_broadcaster" /> 
+    <node pkg="marvel_slam" type="odom_node" name="link0_broadcaster" />
+    <node pkg="marvel_slam" type="temp_motor_node" name="temp_broadcaster" /> 
 
     	<!-- this section static tf -->
     <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 100" />
@@ -31,7 +31,7 @@
     args="-0.2245 0.0 0.2 -1.57 0.0 0 /base_link /imu_base 40" />
 
     <!-- rviz setting -->
-    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find tf_broadcaster)/launch/test.rviz" />
+    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_slam)/launch/test.rviz" />
 
 
 </launch> 

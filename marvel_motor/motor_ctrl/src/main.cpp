@@ -17,8 +17,8 @@ int main(int argc,char**argv){
 	ros::init(argc,argv,"ODOME_NODE");
 	ros::NodeHandle nh;
 	ros::Subscriber sub1 = nh.subscribe("/Motor/speed",1,CallBack_1);
-	ros::Subscriber sub2 = nh.subscribe("/cmd_vel",1,CallBack_2);
-	ros::Publisher speed1 = nh.advertise<geometry_msgs::Twist>("/Motor/Twist/speed",1);
+	ros::Subscriber sub2 = nh.subscribe("motorControl/cmd_vel",1,CallBack_2);
+	ros::Publisher speed1 = nh.advertise<geometry_msgs::Twist>("marvel/cmd_vel",1);
 	ros::Publisher speed2 = nh.advertise<robot_msgs::Motor>("/Motor/speed_set",1);
 	pub1 = &speed1;
 	pub2 = &speed2;

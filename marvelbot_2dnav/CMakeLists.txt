@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  tf_broadcaster
+  marvel_slam
   ydlidar_ros
 )
 
