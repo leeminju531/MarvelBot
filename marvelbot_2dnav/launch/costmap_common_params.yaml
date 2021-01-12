@@ -1,0 +1,23 @@
+# http://wiki.ros.org/costmap_2d
+
+# the costmap only take obstacle layer in obstacle_range 
+# in order word, the maximum range sensor reading range
+# 로봇은 베이스에서 2.5미터 이내에 있는 장애물에 대한 정보만 지도로 업데이트.
+obstacle_range: 2.5 
+#the costmap make out of raytrace range freespace
+raytrace_range: 3.0 
+
+# robot Appearance
+footprint: [[x0, y0], [x1, y1], ... [xn, yn]]
+#robot_radius: ir_of_robot
+
+# set the maximum distance from obstacles to prevent crash
+inflation_radius: 0.55
+
+#  defines a list of sensors. the costmap built by passing this information
+observation_sources: laser_scan_sensor #point_cloud_sensor
+
+
+laser_scan_sensor: {sensor_frame: base_scan, data_type: LaserScan, topic: scan , marking: true, clearing: true} #marking ,clearing related obstacle 
+
+#point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}

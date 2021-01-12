@@ -1,3 +1,5 @@
+
+<!-- http://wiki.ros.org/navigation/Tutorials/RobotSetup  -->
 <launch>
         <!-- imu node -->
     <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" />
