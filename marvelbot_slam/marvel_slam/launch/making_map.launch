@@ -3,22 +3,25 @@
             <!-- imu node -->
      <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" >
      <!--note : port value is your imu port -->
-     <param name="port" type="string" value="/dev/ttyACM2"/>
+     <param name="port" type="string" value="/dev/ttyACM1"/>
      </node>
 
     
 		<!--note : for motor control by keyboard 
 		publisher topic message modified to 'motorControl/cmd_vel' at '/cmd_vel'
 		if u modify ur controller topic name, also modify topic name
-		python source code is ~/robot_ws/src/Marvelbot_slam/marvel_slam/teleop_twist_keyboard -->
+		python source code in ~/robot_ws/src/Marvelbot_slam/marvel_slam/teleop_twist_keyboard -->
     
-    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard"  output="screen"/>
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard"  output="screen">
+    <param name="speed" value="0.15"/>
+    <param name ="turn" value="0.3"/>
+    </node>
 
 
         	<!--rosserial node for motor on Arduino-->  
      <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
      <!-- note : port value is your motor on arduino port -->
-     <param name="port" value="/dev/ttyACM1"/>
+     <param name="port" value="/dev/ttyACM2"/>
      </node>
 
 
@@ -54,11 +57,11 @@
 
 
  	  <!-- this section static tf , now state : arbitrary -->
-    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 100" />
+    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
-    args="0.2245 0.0 0.2 0.0 0.0  0.0 /base_link /base_scan 40" />
+    args="0.2245 0.0 0.2 0 0 0 1 /base_link /base_scan 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu"
-    args="0.2245 0.0 0.2 0.0 0.0  0.0 /base_link /imu_base 40" />
+    args="0.2245 0.0 0.2 0.0 0.0  0.0  1 /base_link /imu_base 40" />
     
     
     <!-- rviz setting -->
@@ -66,7 +69,7 @@
   
     
     <!-- gmapping setting -->
-    <!--
+    
     <param name="use_sim_time" value="false"/>
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
  	 
@@ -102,5 +105,5 @@
       <param name="lasamplerange" value="0.005"/>
       <param name="lasamplestep" value="0.005"/>
     </node>
-	-->
+	
 </launch>

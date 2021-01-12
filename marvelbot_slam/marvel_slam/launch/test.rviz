@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
+        - /TF1/Frames1
         - /LaserScan1
         - /Map1
       Splitter Ratio: 0.5
@@ -58,7 +60,7 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_footprint:
           Value: true
         base_link:
@@ -68,7 +70,7 @@ Visualization Manager:
         imu_base:
           Value: true
         imu_link:
-          Value: true
+          Value: false
         odom:
           Value: true
       Marker Scale: 1
@@ -155,7 +157,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.558817148208618
+      Distance: 2.1342062950134277
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -170,10 +172,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5253982543945312
+      Pitch: 0.969796895980835
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.435404300689697
+      Yaw: 5.135404109954834
     Saved: ~
 Window Geometry:
   Displays:
@@ -191,5 +193,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 609
-  Y: 27
+  X: 759
+  Y: 66

@@ -16,7 +16,7 @@
 
 #define EN_R_1 18
 #define EN_R_2 19
-
+double resolution = 2652.0;
 
 void m1_move(int pwm,bool dir);
 void m2_move(int pwm,bool dir);
@@ -104,14 +104,14 @@ void m2_move(int pwm,bool dir){
   analogWrite(M2_pwm,pwm);
 }
 double m1_speed(){
-  double speed = (l_en *10*60)/2652.0;
+  double speed = (l_en *10*60)/resolution;  // left motor rpm 
   l_en = 0;
   sp_msg.left.data =speed;
   return speed;
 }
 
 double m2_speed(){
-  double speed = (r_en *10*60)/2652.0;
+  double speed = (r_en *10*60)/resolution; // right motor rpm
   r_en = 0;
   sp_msg.right.data =speed;
   return speed;

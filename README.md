@@ -12,7 +12,7 @@ and  'GeoGraphicLibError'
 
 ## file guide 
 
-all of needed node at slam path : 
+all of needed node at slam  : 
 marvelbot_slam/marvelbot_slam/launch/making_map.launch
 
 
