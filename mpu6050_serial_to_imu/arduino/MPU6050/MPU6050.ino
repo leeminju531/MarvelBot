@@ -156,12 +156,12 @@ void setup() {
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
-    mpu.setXAccelOffset(435);
-    mpu.setYAccelOffset(1834);
-    mpu.setZAccelOffset(1636);
+    mpu.setXAccelOffset(298);
+    mpu.setYAccelOffset(1843);
+    mpu.setZAccelOffset(1652);
     mpu.setXGyroOffset(-134);
-    mpu.setYGyroOffset(-6);
-    mpu.setZGyroOffset(39);
+    mpu.setYGyroOffset(-7);
+    mpu.setZGyroOffset(34);
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {

@@ -1,10 +1,20 @@
 
 <!-- http://wiki.ros.org/navigation/Tutorials/RobotSetup  -->
 <launch>
-        <!-- imu node -->
-    <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" />
+           <!-- imu node -->
+     <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" >
+     <!--note : port value is your imu port -->
+     <param name="port" type="string" value="/dev/ttyACM2"/>
+     </node>
 
-          <!-- lidar node 
+                <!--rosserial node for motor on Arduino-->  
+     <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+     <!-- note : port value is your motor on arduino port -->
+     <param name="port" value="/dev/ttyACM1"/>
+     </node>
+
+
+            <!-- lidar node --> 
     <node name="ydlidar_node"  pkg="ydlidar_ros"  type="ydlidar_node"  respawn="false" >
     <param name="port"         type="string" value="/dev/ydlidar"/>  
     <param name="baudrate"         type="int" value="230400"/>  
@@ -19,21 +29,23 @@
     <param name="ignore_array" type="string" value="" />
     <param name="frequency"    type="double" value="10"/>
     <param name="isTOFLidar"    type="bool"   value="false"/>
-  </node>--> 
+  </node>
   
-   	          <!-- odom node-->
-    <node pkg="marvel_slam" type="odom_node" name="link0_broadcaster" />
-    <node pkg="marvel_slam" type="temp_motor_node" name="temp_broadcaster" /> 
+              <!-- odom node-->
+    <!-- realise comment if u wanna use only wheel odometry
+    <node pkg="marvel_slam" type="odom_node" name="link0_broadcaster" />-->
+    <node pkg="marvel_slam" type="imu_wheel_odom_node" name="imu_wheel_odom_node" />
 
-    	<!-- this section static tf -->
-    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 100" />
+
+      <!-- this section static tf , now state : arbitrary -->
+    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
-    args="0.2245 0.0 0.2 0.0 0.0 0.0 /base_link /base_scan 40" />
+    args="0.2245 0.0 0.2 0 0 0 1 /base_link /base_scan 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu"
-    args="-0.2245 0.0 0.2 -1.57 0.0 0 /base_link /imu_base 40" />
-
-    <!-- rviz setting -->
-    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_slam)/launch/test.rviz" />
+    args="0.2245 0.0 0.2 0.0 0.0  0.0  1 /base_link /imu_base 40" />
+   
+   
+ 
 
 
 </launch> 

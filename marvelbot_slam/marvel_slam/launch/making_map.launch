@@ -3,7 +3,7 @@
             <!-- imu node -->
      <node pkg="mpu6050_serial_to_imu" type="mpu6050_serial_to_imu_node" name="mpu6050_serial_to_imu_node" >
      <!--note : port value is your imu port -->
-     <param name="port" type="string" value="/dev/ttyACM1"/>
+     <param name="port" value="/dev/ttyACM2"/>
      </node>
 
     
@@ -21,7 +21,7 @@
         	<!--rosserial node for motor on Arduino-->  
      <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
      <!-- note : port value is your motor on arduino port -->
-     <param name="port" value="/dev/ttyACM2"/>
+     <param name="port" value="/dev/ttyACM1"/>
      </node>
 
 
@@ -59,16 +59,16 @@
  	  <!-- this section static tf , now state : arbitrary -->
     <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.3 0 0 0 1 base_footprint base_link 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
-    args="0.2245 0.0 0.2 0 0 0 1 /base_link /base_scan 40" />
+    args="0.2245 0.0 0.2 0 0 0 1 base_link base_scan 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu"
-    args="0.2245 0.0 0.2 0.0 0.0  0.0  1 /base_link /imu_base 40" />
+    args="0.2245 0.0 0.2 0.0 0.0 0.0 1 base_link imu_base 40" />
     
     
     <!-- rviz setting -->
     <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_slam)/launch/test.rviz" />
   
     
-    <!-- gmapping setting -->
+    <!--gmapping setting -->
     
     <param name="use_sim_time" value="false"/>
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
@@ -76,34 +76,34 @@
 
  	  <param name="base_frame" value="base_link"/>
  	  <param name="odom_frame" value="odom"/>
-      <param name="map_update_interval" value="5.0"/>
-      <param name="maxUrange" value="16.0"/>
-      <param name="sigma" value="0.05"/>
-      <param name="kernelSize" value="1"/>
-      <param name="lstep" value="0.05"/>
-      <param name="astep" value="0.05"/>
-      <param name="iterations" value="5"/>
-      <param name="lsigma" value="0.075"/>
-      <param name="ogain" value="3.0"/>
-      <param name="lskip" value="0"/>
-      <param name="srr" value="0.1"/>
-      <param name="srt" value="0.2"/>
-      <param name="str" value="0.1"/>
-      <param name="stt" value="0.2"/>
-      <param name="linearUpdate" value="1.0"/>
-      <param name="angularUpdate" value="0.5"/>
-      <param name="temporalUpdate" value="3.0"/>
-      <param name="resampleThreshold" value="0.5"/>
-      <param name="particles" value="30"/>
-      <param name="xmin" value="-50.0"/>
-      <param name="ymin" value="-50.0"/>
-      <param name="xmax" value="50.0"/>
-      <param name="ymax" value="50.0"/>
-      <param name="delta" value="0.05"/>
-      <param name="llsamplerange" value="0.01"/>
-      <param name="llsamplestep" value="0.01"/>
-      <param name="lasamplerange" value="0.005"/>
-      <param name="lasamplestep" value="0.005"/>
+    <param name="map_update_interval" value="5.0"/>
+    <param name="maxUrange" value="16.0"/>
+    <param name="sigma" value="0.05"/>
+    <param name="kernelSize" value="1"/>
+    <param name="lstep" value="0.05"/>
+    <param name="astep" value="0.05"/>
+    <param name="iterations" value="5"/>
+    <param name="lsigma" value="0.075"/>
+    <param name="ogain" value="3.0"/>
+    <param name="lskip" value="0"/>
+    <param name="srr" value="0.1"/>
+    <param name="srt" value="0.2"/>
+    <param name="str" value="0.1"/>
+    <param name="stt" value="0.2"/>
+    <param name="linearUpdate" value="1.0"/>
+    <param name="angularUpdate" value="0.5"/>
+    <param name="temporalUpdate" value="3.0"/>
+    <param name="resampleThreshold" value="0.5"/>
+    <param name="particles" value="30"/>
+    <param name="xmin" value="-50.0"/>
+    <param name="ymin" value="-50.0"/>
+    <param name="xmax" value="50.0"/>
+    <param name="ymax" value="50.0"/>
+    <param name="delta" value="0.05"/>
+    <param name="llsamplerange" value="0.01"/>
+    <param name="llsamplestep" value="0.01"/>
+    <param name="lasamplerange" value="0.005"/>
+    <param name="lasamplestep" value="0.005"/>
     </node>
 	
 </launch>
