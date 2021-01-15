@@ -8,7 +8,8 @@
 
     
 		<!--note : for motor control by keyboard 
-		publisher topic message modified to 'motorControl/cmd_vel' at '/cmd_vel'
+		publisher topic message modified to 'motorControl/cmd_vel' at '/cmd_vel' -> move_base publisher : cmd/vel topic so remodified 
+        topic name 'cmd_vel'
 		if u modify ur controller topic name, also modify topic name
 		python source code in ~/robot_ws/src/Marvelbot_slam/marvel_slam/teleop_twist_keyboard -->
     
@@ -61,7 +62,7 @@
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
     args="0.2245 0.0 0.2 0 0 0 1 base_link base_scan 40" />
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu"
-    args="0.2245 0.0 0.2 0.0 0.0 0.0 1 base_link imu_base 40" />
+    args="0.2245 -0.1 0.2 0.0 0.0 0.0 1 base_link imu_base 40" />
     
     
     <!-- rviz setting -->
@@ -74,8 +75,8 @@
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
  	 
 
- 	  <param name="base_frame" value="base_link"/>
- 	  <param name="odom_frame" value="odom"/>
+ 	<param name="base_frame" value="base_footprint"/>
+ 	<param name="odom_frame" value="odom"/>
     <param name="map_update_interval" value="5.0"/>
     <param name="maxUrange" value="16.0"/>
     <param name="sigma" value="0.05"/>
