@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include <cmath>
-#include "my_odom.cpp"
+//#include "my_odom.cpp"
 #include "robot_msgs/Motor.h"
 #include "geometry_msgs/Twist.h"
 #define WHEEL_RADIUS 0.067
@@ -68,12 +68,12 @@ void CallBack_2(const geometry_msgs::Twist &msg){
 
 	motor_msgs.right.data = right_target_RPM;
 	motor_msgs.left.data = left_target_RPM;
-	ROS_INFO("linear_vel : %f(m/s)",msg.linear.x);
-	ROS_INFO("angular_vel : %f(rad/s)",msg.angular.z);
-	ROS_INFO("MOTOR TARGET RPM  \t: %f",angular_right_RPM);
-	ROS_INFO("WHEEL_RADIUS : %.3f",WHEEL_RADIUS);
-	ROS_INFO("ROBOT_RADIUS : %.3F",ROBOT_RADIUS);
+	// ROS_INFO("linear_vel : %f(m/s)",msg.linear.x);
+	// ROS_INFO("angular_vel : %f(rad/s)",msg.angular.z);
+	// ROS_INFO("MOTOR TARGET RPM  \t: %f",angular_right_RPM);
+	// ROS_INFO("WHEEL_RADIUS : %.3f",WHEEL_RADIUS);
+	// ROS_INFO("ROBOT_RADIUS : %.3F",ROBOT_RADIUS);
 	
-	ROS_INFO("MOTOR TARGET RPM \tLEFT : %f, RIGHT : %f",motor_msgs.left.data,motor_msgs.right.data);
+	// ROS_INFO("MOTOR TARGET RPM \tLEFT : %f, RIGHT : %f",motor_msgs.left.data,motor_msgs.right.data);
 	pub2->publish(motor_msgs);
 }
