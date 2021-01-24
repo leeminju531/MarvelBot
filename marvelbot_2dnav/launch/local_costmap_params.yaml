@@ -9,3 +9,5 @@ local_costmap:
   width: 6.0 # meter
   height: 6.0
   resolution: 0.05 #(meters/cell) mostly eqaul to static map resolution 
+  transform_tolerance: 0.5
+  
