@@ -1,9 +1,9 @@
 <launch>
 <node pkg="amcl" type="amcl" name="amcl" output="screen">
   <param name="use_map_topic" value="false"/>
-  <param name="initial_pose_x" value="-0.056"/>
-  <param name="initial_pose_y" value="-0.123"/>
-  <param name="initial_pose_a" value="0.907"/>
+  <param name="initial_pose_x" value="0"/>
+  <param name="initial_pose_y" value="0"/>
+  <param name="initial_pose_a" value="0"/>
   <!-- Publish scans from best pose at a max of 10 Hz -->
   <param name="odom_model_type" value="diff"/>
   <param name="odom_alpha5" value="0.1"/>

@@ -3,8 +3,8 @@
 //#include "my_odom.cpp"
 #include "robot_msgs/Motor.h"
 #include "geometry_msgs/Twist.h"
-#define WHEEL_RADIUS 0.067
-#define ROBOT_RADIUS 0.155
+#define WHEEL_RADIUS 0.068
+#define ROBOT_RADIUS 0.16
 #define RPM_to_RADIAN 3.141592654*2/60
 #define RADIAN_to_RPM 60/(3.141592654*2)
 #define PI 3.141592654
