@@ -81,7 +81,8 @@ int main(int argc, char **argv){
             y += delta_y;
             th += delta_th;
 
-            geometry_msgs::TransformStamped transformStamped; 
+            geometry_msgs::TransformStamped transformStamped;
+
 
             transformStamped.header.stamp = ros::Time::now();//we need to give the transform being published a timestamp, in this case current time
             transformStamped.header.frame_id = "odom";
@@ -89,13 +90,17 @@ int main(int argc, char **argv){
             transformStamped.transform.translation.x = x;
             transformStamped.transform.translation.y = y;
             transformStamped.transform.translation.z = 0; 
-            
-            tf2::Quaternion q;
-            q.setRPY(0,0,th);
-            transformStamped.transform.rotation.x = q.x();
-            transformStamped.transform.rotation.y = q.y();
-            transformStamped.transform.rotation.z = q.z();
-            transformStamped.transform.rotation.w = q.w();
+
+            //since all odometry is 6DOF we'll need a quaternion created from yaw
+            geometry_msgs::Quaternion quat = tf::createQuaternionMsgFromYaw(th);
+
+            transformStamped.transform.rotation = quat;
+            // tf2::Quaternion q;
+            // q.setRPY(0,0,th);
+            // transformStamped.transform.rotation.x = q.x();
+            // transformStamped.transform.rotation.y = q.y();
+            // transformStamped.transform.rotation.z = q.z();
+            // transformStamped.transform.rotation.w = q.w();
 
             br.sendTransform(transformStamped); // this is where real work is done
 
