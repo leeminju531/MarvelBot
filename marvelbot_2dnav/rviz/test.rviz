@@ -5,9 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Status1
-        - /local_costmap1
         - /TF1/Frames1
-        - /GridCells1
+        - /global_costmap1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -202,9 +201,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 55
+      Max Intensity: 513
       Min Color: 0; 0; 0
-      Min Intensity: 3
+      Min Intensity: 2
       Name: LaserScan
       Position Transformer: XYZ
       Queue Size: 10
@@ -224,6 +223,31 @@ Visualization Manager:
       Name: GridCells
       Topic: ""
       Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: TargetPose
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /move_base_simple/goal
+      Unreliable: false
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: false
+      Name: global_costmap
+      Topic: /move_base/global_costmap/costmap
+      Unreliable: false
+      Use Timestamp: false
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -252,25 +276,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.514859914779663
+      Distance: 5.500816822052002
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.0095338821411133
-        Y: 1.1956206560134888
-        Z: 0.19614624977111816
+        X: 0.5060862302780151
+        Y: -0.14661645889282227
+        Z: 1.2393580675125122
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.515397548675537
+      Pitch: 1.099795937538147
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.375412940979004
+      Yaw: 3.0504109859466553
     Saved: ~
 Window Geometry:
   Displays:
@@ -289,4 +313,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 720
-  Y: 27
+  Y: 61
