@@ -1,4 +1,0 @@
-<!-- http://wiki.ros.org/navigation/Tutorials/RobotSetup  -->
-<launch>
-     <include file="$(find marvel_slam)/launch/marvel_configuration.launch"/>
-</launch>

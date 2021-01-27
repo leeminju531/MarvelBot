@@ -22,7 +22,7 @@ inflation_layer: # http://wiki.ros.org/costmap_2d/hydro/inflation
 # increasing cost_scaling_factor will decrease the resulting cost values. 
   enabled: true
   cost_scaling_factor: 10 # default
-  inflation_radius: 0.55 # the radius in meters
+  inflation_radius: 0.3 # the radius in meters
 
 obstacle_layer: #http://wiki.ros.org/costmap_2d/hydro/obstacles
   enabled: true
