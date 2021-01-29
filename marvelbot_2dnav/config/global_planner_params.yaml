@@ -8,6 +8,7 @@ GlobalPlanner:
   # Specifies whether or not to allow the planner to create plans that traverse unknown space.
   allow_unknown: false #NOTE: if you are using a layered costmap_2d costmap with a voxel or obstacle layer, you must also set the track_unknown_space param for that layer to be true, or it will convert all your unknown space to free space (which planner will then happily go right through). 
 
+  # true is  helpful  when we would  like  to visualize the potential map in RVIZ.
   visualize_potential: false #Specifies whether or not to visualize the potential area 
 
   # A tolerance on the goal point for the planner. 
@@ -21,3 +22,8 @@ GlobalPlanner:
   # Backward=4 (Negative x axis points along the path, except for the goal orientation) 
   # Leftward=5 (Positive y axis points along the path, except for the goal orientation) 
   # Rightward=6 (Negative y axis points along the path, except for the goal orientation) 
+  
+  # cost = neutral_cost + cost_factor * costmapcostvalue.
+  lethal_cost: 253
+  neutral_cost: 66
+  cost_factor: 0.55
