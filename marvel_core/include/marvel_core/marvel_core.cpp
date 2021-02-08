@@ -1,17 +1,54 @@
 #include "marvel_core.h"
 
-Marvel::Marvel()
+Marvel::Marvel() 
 {
-	Parameter();
-	while(node_.ok())
-	DetectTag(tag0);
+	ParameterSet();
+	flag_ = Initial;
 }
+
+
 void Marvel::Start()
 {
+	while(node_.ok())
+	{
+		switch{
+		case Initial:
+			if(DetectTag(tag0))
+			{
+				if(TagLocation(tag0,x,y,th))
+				{
+					WaitGoal();
+				}
+			}
+			break;
+		case Moving:
+
+
+			break;
+		case AtTargetPosition:
+
+
+			break;
+		case Back:
+
+
+			break;
+		case Aborted:
+
+
+			break;
+		}
+
+	}
+	
+}
+
+void Marvel::WaitGoal()
+{
 
 }
 
-void Marvel::Parameter()
+void Marvel::ParameterSet()
 {
 	if(!node_.getParam("parentFrame",parentFrame_))
 		parentFrame_ = "base_footprint";
@@ -24,44 +61,19 @@ void Marvel::Parameter()
 
 bool Marvel::DetectTag(int tagNum)
 {	
-	ROS_INFO("tag Num : %d",tagNum);
-	cout<<tagFrame[0]<<endl;
-	printf("string : %s",tagFrame[0]);
-	
-	// tf2_ros::Buffer tfBuffer_;
-	// tf2_ros::TransformListener tfListener(tfBuffer_);
-	// geometry_msgs::TransformStamped transformStamped_;
-	// try
-	// {
-	// 	transformStamped_ = tfBuffer_.lookupTransform("odom","base_footprint",ros::Time(0));
-		
-	// }
-	// catch(tf2::TransformException &ex)
-	// {
-	// 	ROS_INFO(" Frame not exist ! ");
-	// 	return false;
-	// }
-	// ROS_INFO(" Frame is exist ! ");
-	// return true;
-
-	tf2_ros::Buffer tfBuffer_;
-	geometry_msgs::TransformStamped transformStamped_;
 	tf2_ros::TransformListener tfListener(tfBuffer_);
-	while(node_.ok()){
-		try
-		{
-			transformStamped_ = tfBuffer_.lookupTransform("odom","base_footprint",ros::Time(0));
-			
-		}
-		catch(tf2::TransformException &ex)
-		{
-			ROS_INFO("Frame not exist ! ");
-			
-		}
-		ROS_INFO(" Frame is exist ! ");
+	try
+	{
+		transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],ros::Time(0),ros::Duration(0.3));
+		
 	}
-	return true;
-	
+	catch(tf2::TransformException &ex)
+	{
+		ROS_INFO(" Frame not exist ! ");
+		return false;
+	}
+	ROS_INFO(" Frame is exist ! ");
+	return true;	
 }
 
 bool Marvel::TagLocation(int tagNum, float x, float y, float th)
