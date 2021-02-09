@@ -13,7 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  
+  move_base_msgs
+  actionlib
 )
 
 ## System dependencies are found with CMake's conventions
@@ -211,5 +212,14 @@ target_link_libraries(global_localization_based_lidar
  ${catkin_LIBRARIES}
 )
 
+add_executable(action_nav src/action_nav.cpp)
+target_link_libraries(action_nav
+ ${catkin_LIBRARIES}
+)
+
+add_executable(action_nav2 src/action_nav2.cpp)
+target_link_libraries(action_nav2
+ ${catkin_LIBRARIES}
+)
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

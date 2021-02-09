@@ -6,7 +6,11 @@
 #include <tf2_ros/transform_listener.h>
 #include <string>
 #include <iostream>
-
+#include <geometry_msgs/Pose.h>
+#include <actionlib/client/simple_action_client.h>
+#include <move_base_msgs/MoveBaseAction.h> 
+#include <boost/thread.hpp>
+#include <tf2/LinearMath/Quaternion.h>
 
 using namespace std;
 
@@ -31,6 +35,13 @@ using namespace std;
 
 
 */
+enum map_pose
+{
+	X,
+	Y,
+	TH
+};
+
 enum _working
 {
 	Initial,
@@ -38,7 +49,8 @@ enum _working
 	AtTargetPosition,
 	Back,
 	Aborted
-}
+};
+
 enum _tag
 {
 	tag0,
@@ -47,17 +59,24 @@ enum _tag
 	tag3,
 	tag4,
 	tag5,
-	tag6,
-	tag7,
-	tag8,
-	tag9,
 	
 };
+int tagSize = 6;
+string tagFrame[] = {"tag_0","tag_1","tag_2","tag_3","tag_4","tag_5"};
+
+enum _wayPoint
+{
+	InitWayPoint,
+	OneWayPoint,
+	TwoWayPoint,
+	ThreeWayPoint
+
+};
+int wayPointSize = 4;
 
 
 
-string tagFrame[10] = {"tag_0","tag_1","tag_2","tag_3","tag_4",
-						"tag_5","tag_6","tag_7","tag_8","tag_9"};
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 class Marvel
 {
@@ -66,19 +85,32 @@ public:
 	void Start();
 	bool DetectTag(int tagNum);
 	//note : Target x ,y ,th on "Tag Frame"
-	bool TagLocation(int tagNum, float x, float y, float th); //input x,y : m /th : degree
+	bool TagLocation(int tagNum); //input x,y : m /th : degree
 
 private:
 	void ParameterSet();
+	void LossLocalization();
 	void WaitGoal();
+	void SendGoal(int target_tag);
+	void doneCB();
+	void activeCB();
+	void feedbackCB();
+	void PrintActionState();
 	ros::NodeHandle node_;
 	string parentFrame_;
 	string childFrame_;
+	MoveBaseClient ac_ ;
 	double angleTolerance_;
 	double distanceTolerance_;
 	tf2_ros::Buffer tfBuffer_;
 	geometry_msgs::TransformStamped transformStamped_;
 	int flag_ ;
+	float target_tag_poseX_,target_tag_poseY_,target_tag_poseTH_;
+	int target_tag_;
+	float tag_location[tagSize][3]_;
+	float loss_tag_location[tagSize][3]_;
+	float wayPoint[wayPointSize][3]_;
+
 };
 
 #endif 
