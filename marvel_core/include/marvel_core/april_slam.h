@@ -42,8 +42,11 @@ public:
 private:
 	ros::NodeHandle node_;
 	string parentFrame_;
+
 	tf2_ros::Buffer tfBuffer_; // why have to define here??
-	
+	geometry_msgs::TransformStamped transformStamped_;
+	tf2_ros::TransformListener tfListener_;
+
 	double angleTolerance_;
 	double distanceTolerance_;
 	ros::Publisher cmd_pub;

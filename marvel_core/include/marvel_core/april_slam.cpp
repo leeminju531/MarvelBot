@@ -1,6 +1,7 @@
 #include "april_slam.h"
 
 TagSlam::TagSlam(double angleTolerance,double distanceTolerance) 
+:	tfListener_(tfBuffer_)
 {
 	angleTolerance_ = angleTolerance;
 	distanceTolerance_ = distanceTolerance;
@@ -10,6 +11,7 @@ TagSlam::TagSlam(double angleTolerance,double distanceTolerance)
 
 }
 TagSlam::TagSlam(double angleTolerance,double distanceTolerance,string parentFrame)
+:	tfListener_(tfBuffer_)
 {
 	angleTolerance_ = angleTolerance;
 	distanceTolerance_ = distanceTolerance;
@@ -25,14 +27,14 @@ bool TagSlam::TagDetection(int tagNum)
 		ROS_WARN("tagNum Out of Index !! ");
 		return false;
 	}
-	tf2_ros::Buffer tfBuffer_;
-	geometry_msgs::TransformStamped transformStamped_;
-	tf2_ros::TransformListener tfListener(tfBuffer_);
+	// tf2_ros::Buffer tfBuffer_;
+	// geometry_msgs::TransformStamped transformStamped_;
+	 //tf2_ros::TransformListener tfListener(tfBuffer_);
 	try
 	{
 		// the TF broadcaster hz have to pass up at least 3.3hz(1/0.3)
 		transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
-			ros::Time(0),ros::Duration(0.3));
+			ros::Time::now(),ros::Duration(0.3));
 		
 	}
 	catch(tf2::TransformException &ex)
@@ -52,13 +54,13 @@ bool TagSlam::TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float t
 	float target_pose_x,target_pose_y,target_pose_th;
 	while(ros::ok())
 	{
-		tf2_ros::Buffer tfBuffer_;
-		geometry_msgs::TransformStamped transformStamped_;
-		tf2_ros::TransformListener tfListener(tfBuffer_);
+		// tf2_ros::Buffer tfBuffer_;
+		// geometry_msgs::TransformStamped transformStamped_;
+		// tf2_ros::TransformListener tfListener(tfBuffer_);
 		try
 		{
 			transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
-			ros::Time::now(),ros::Duration(0.33));
+			ros::Time::now(),ros::Duration(0.3));
 
 		}catch(tf2::TransformException &ex)
 		{
