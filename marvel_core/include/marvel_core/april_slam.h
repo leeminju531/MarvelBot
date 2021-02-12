@@ -40,6 +40,8 @@ public:
 	bool PDControl(float target_pose_x,float target_pose_y, float target_pose_th);
 
 private:
+	void PredictUpdate();
+	void PredicInit();
 	ros::NodeHandle node_;
 	string parentFrame_;
 
@@ -49,9 +51,14 @@ private:
 
 	double angleTolerance_;
 	double distanceTolerance_;
-	ros::Publisher cmd_pub;
-	geometry_msgs::Twist vel;
-	
+	ros::Publisher cmd_pub_;
+	geometry_msgs::Twist vel_;
+	float target_pose_x_,target_pose_y_,target_pose_th_;
+
+	//for predict updating
+	ros::Time last_time_,current_time_;
+	double vel_X_,vel_Y_,vel_Th_;
+	double Th_;
 };
 
 
