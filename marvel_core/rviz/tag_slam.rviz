@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -54,7 +55,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/TF
       Enabled: true
-      Frame Timeout: 15
+      Frame Timeout: 999
       Frames:
         All Enabled: true
         base_footprint:
@@ -113,18 +114,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.5154039263725281
-        Y: 0.736330509185791
-        Z: 1.0268678665161133
+        X: -0.6423662304878235
+        Y: 0.5606676936149597
+        Z: 1.0798176527023315
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5053985118865967
+      Pitch: 1.3603981733322144
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.0935845375061035
+      Yaw: 0.08040113747119904
     Saved: ~
 Window Geometry:
   Displays:
@@ -143,4 +144,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 720
-  Y: 118
+  Y: 88

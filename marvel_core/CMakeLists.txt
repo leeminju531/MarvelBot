@@ -133,3 +133,7 @@ add_executable(main src/main.cpp)
 add_dependencies(main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(main  ${catkin_LIBRARIES} mylib)
 
+add_executable(temp_motor src/temp_motor.cpp)
+add_dependencies(temp_motor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(temp_motor  ${catkin_LIBRARIES} mylib)
+
