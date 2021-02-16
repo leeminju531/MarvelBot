@@ -9,6 +9,7 @@
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_listener.h>
 #include <iostream>
+#include <math.h>
 
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
@@ -26,13 +27,20 @@ enum _tag
 	tag5,
 	
 };
-
 enum _PD
 {
-	Point_Angular,
-	Point_Linear_Angular,
-	Target_Angular
+	Turn2TargetPoint,
+	Moving2TargetPoint,
+	CorrenctInTolerance,
+	Turn2TargetOrientation
 };
+
+// enum _PD
+// {
+// 	Point_Angular,
+// 	Point_Linear_Angular,
+// 	Target_Angular
+// };
 
 int tagSize =6;
 string tagFrame[] = {"tag_0","tag_1","tag_2","tag_3","tag_4","tag_5"};
@@ -47,10 +55,12 @@ public:
 	bool PDControl(float target_pose_x,float target_pose_y, float target_pose_th);
 
 private:
-	void PredictUpdate();
 	void PredicInit();
-	void PdParamSet();
+	void PDParamSet();
 	void PrintPD_Var();
+	void ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float vel_Th);
+	void ImagineInit();
+	
 	ros::NodeHandle node_;
 	string parentFrame_;
 
@@ -60,7 +70,7 @@ private:
 
 	ros::Publisher cmd_pub_;
 	geometry_msgs::Twist vel_;
-	float target_pose_x_,target_pose_y_,target_pose_th_;
+	
 
 	//for predict updating
 	ros::Time last_time_,current_time_;
@@ -72,6 +82,7 @@ private:
 	double distance_Tolerance_,angle_Tolerance_;
 	int pd_flag_;
 	double Th_;
+	float imagine_target_pose_x_,imagine_target_pose_y_,imagine_th_;
 };
 
 
