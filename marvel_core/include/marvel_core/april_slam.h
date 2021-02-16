@@ -74,7 +74,7 @@ private:
 
 	//for predict updating
 	ros::Time last_time_,current_time_;
-	double vel_X_,vel_Y_,vel_Th_;
+	
 	double before_distance_,before_angle_;
 	double cur_distance_,cur_angle_;
 	double p_distance_gain_,d_distance_gain_;
@@ -83,6 +83,8 @@ private:
 	int pd_flag_;
 	double Th_;
 	float imagine_target_pose_x_,imagine_target_pose_y_,imagine_th_;
+	float target_pose_x_,target_pose_y_;
+	double vel_X_,vel_Y_,vel_Th_;
 };
 
 

@@ -34,7 +34,7 @@ bool TagSlam::TagDetection(int tagNum)
 	try
 	{	// the TF broadcaster hz have to pass up at least 3.3hz(1/0.3)
 		transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
-			ros::Time::now(),ros::Duration(0.3));
+			ros::Time::now(),ros::Duration(0.2));
 	}
 	catch(tf2::TransformException &ex)
 	{
@@ -59,7 +59,7 @@ bool TagSlam::TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float t
 		try
 		{
 			transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
-			ros::Time::now(),ros::Duration(0.3));
+			ros::Time::now(),ros::Duration(0.2));
 
 		}catch(tf2::TransformException &ex)
 		{
@@ -111,22 +111,28 @@ void TagSlam::ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float 
 {
 	current_time_ = ros::Time::now();
 	double dt = (current_time_ - last_time_).toSec();
-	double delta_x = ( vel_X_ * cos(imagine_th_) ) * dt;
-	double delta_y = ( vel_X_ * sin(imagine_th_) ) * dt;
 	double delta_th = vel_Th * dt;
-
+	// double delta_x = ( vel_X_ * cos(delta_th) ) * dt;
+	// double delta_y = ( vel_X_ * sin(delta_th) ) * dt;
+	float x = cur_pose_x;
+	float y = cur_pose_y;
+	printf("delta_th : %.3f\n",RAD2DEG(delta_th));
+	printf("dt : %.3f\n",dt);
+	printf("vel_Th : %.3f\n",vel_Th);
 	imagine_th_ += delta_th;
-	float x = cur_pose_x - delta_x;
-	float y = cur_pose_y - delta_y;
-	imagine_target_pose_x_ = cos(imagine_th_)*x - sin(imagine_th_)*y;
-	imagine_target_pose_y_ = sin(imagine_th_)*x + cos(imagine_th_)*y;
-
+	// float x = cur_pose_x - delta_x;
+	// float y = cur_pose_y - delta_y;
+	imagine_target_pose_x_ = cos(delta_th)*x - sin(delta_th)*y;
+	imagine_target_pose_y_ = sin(delta_th)*x + cos(delta_th)*y;
+	last_time_ = ros::Time::now();
 }
+
 void TagSlam::ImagineInit()
 {
 	imagine_target_pose_x_ = 0;
 	imagine_target_pose_y_ = 0;
 	imagine_th_ = 0;
+	current_time_ = last_time_ = ros::Time::now();
 }
 
 // target x,y,th On Tag Frame
@@ -136,14 +142,14 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
     float y = target_pose_y;
     cur_distance_ = sqrt(x*x + y*y);
 	
-	if(cur_distance_ < distance_Tolerance_)
-		pd_flag_ = Turn2TargetOrientation;
+	// if(cur_distance_ < distance_Tolerance_)
+	// 	pd_flag_ = Turn2TargetOrientation;
 
-	if(cur_distance_ >= distance_Tolerance_)
-		if(pd_flag_ == Turn2TargetOrientation || pd_flag_ == CorrenctInTolerance)
-			pd_flag_ = CorrenctInTolerance;
-		else
-			pd_flag_ = Turn2TargetPoint;
+	// if(cur_distance_ >= distance_Tolerance_)
+	// 	if(pd_flag_ == Turn2TargetOrientation || pd_flag_ == CorrenctInTolerance)
+	// 		pd_flag_ = CorrenctInTolerance;
+	// 	else
+	// 		pd_flag_ = Turn2TargetPoint;
 
 	switch(pd_flag_)
 	{
@@ -160,15 +166,15 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			
 			cur_distance_ = 0;
 
-			vel_.linear.x = p_distance_gain_ * cur_distance_ + d_distance_gain_ * before_distance_;
-			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * before_angle_;
+			vel_.linear.x = p_distance_gain_ * cur_distance_ + d_distance_gain_ * (cur_distance_ - before_distance_);
+			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * (cur_angle_ - before_angle_);
 			before_distance_ = cur_distance_;
 			before_angle_ = cur_angle_;
 
 			if(abs(cur_angle_) < angle_Tolerance_)
 			{
 				vel_.angular.z = 0;
-				pd_flag_ = Moving2TargetPoint;
+				//pd_flag_ = Moving2TargetPoint;
 			}
 			cmd_pub_.publish(vel_);
 
@@ -185,8 +191,8 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			
 			cur_distance_ = sqrt(x*x+y*y);
 
-			vel_.linear.x = p_distance_gain_ * cur_distance_ + d_distance_gain_ * before_distance_;
-			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * before_angle_;
+			vel_.linear.x = p_distance_gain_ * cur_distance_ + d_distance_gain_ * (cur_distance_ - before_distance_);
+			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * (cur_angle_ - before_angle_);
 			before_distance_ = cur_distance_;
 			before_angle_ = cur_angle_;
 
@@ -239,22 +245,32 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			break;
 			
 	}
-	PrintPD_Var();
+	target_pose_x_ = x;
+	target_pose_y_ = y;
+	vel_X_ = vel_.linear.x;
+	vel_Th_ = vel_.angular.z;
 	ImagineUpdate(target_pose_x, target_pose_y, vel_.linear.x , vel_.angular.z);
-    last_time_ = ros::Time::now();
+	printf("vel_.angular.z : %.3f\n",vel_.angular.z);
+	PrintPD_Var();
+	
+    
 
     return false;
 }
 
 void TagSlam::PrintPD_Var()
 {
-	printf("flag : %d \n",pd_flag_);
-	printf("linearVel : %.3f\n",vel_.linear.x);
-	printf("angularVel : %.3f\n",vel_.angular.z);
-	printf("cur_angle_ : %.3f || angle_Tolerance_ : %.3f \n",RAD2DEG(cur_angle_),RAD2DEG(angle_Tolerance_));
-	//printf("linear_Vel_ : %.3f || distance_Tolerance : %.3f\n")
-	// printf("target_pose_x_ : %.3f || target_pose_y_ : %.3f || target_pose_th_ : %.3f \n",
-	// 	target_pose_x_,target_pose_y_,target_pose_th_);
-	// printf("Th_ : %.3f || vel_X_: %.3f || vel_Y_ : %.3f\n",Th_,vel_X_,vel_Y_);
-	printf("imagine_target_pose_x_ : %.3f || imagine_target_pose_y_ : %.3f\n",imagine_target_pose_x_,imagine_target_pose_y_);
+	// printf("flag : %d \n",pd_flag_);
+	// printf("linearVel : %.3f\n",vel_.linear.x);
+	// printf("angularVel : %.3f\n",vel_.angular.z);
+	// printf("cur_angle_ : %.3f || angle_Tolerance_ : %.3f \n",RAD2DEG(cur_angle_),RAD2DEG(angle_Tolerance_));
+	// //printf("linear_Vel_ : %.3f || distance_Tolerance : %.3f\n")
+	
+	// // printf("Th_ : %.3f || vel_X_: %.3f || vel_Y_ : %.3f\n",Th_,vel_X_,vel_Y_);
+	// printf("imagine_target_pose_x_ : %.3f || imagine_target_pose_y_ : %.3f\n",imagine_target_pose_x_,imagine_target_pose_y_);
+	// printf("detected target_pose_x_ : %.3f || target_pose_y_ : %.3f\n",
+	// 	target_pose_x_,target_pose_y_);
+	// printf("Predicted imagine_pose_x_:%.3f || imagine_pose_y_ : %.3f\n ",
+	// 	imagine_target_pose_x_,imagine_target_pose_y_);
+	// printf("predicted imagine_th_ : %.3f\n",RAD2DEG(imagine_th_));
 }
