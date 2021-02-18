@@ -12,11 +12,11 @@ TagSlam::TagSlam()
 
 void TagSlam::PDParamSet()
 {
-	distance_Tolerance_ = 0.1;
-	angle_Tolerance_ = DEG2RAD(5);
-	p_distance_gain_ = 0.1;
+	distance_Tolerance_ = 0.02;
+	angle_Tolerance_ = DEG2RAD(2);
+	p_distance_gain_ = 0.3;
 	d_distance_gain_ = 0.1;
-	p_angle_gain_ = 0.1;
+	p_angle_gain_ = 0.6;
 	d_angle_gain_ = 0.1;
 	pd_flag_ = Turn2TargetPoint;
 	imagine_target_pose_x_=0;
@@ -112,18 +112,19 @@ void TagSlam::ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float 
 	current_time_ = ros::Time::now();
 	double dt = (current_time_ - last_time_).toSec();
 	double delta_th = vel_Th * dt;
-	// double delta_x = ( vel_X_ * cos(delta_th) ) * dt;
-	// double delta_y = ( vel_X_ * sin(delta_th) ) * dt;
+	double delta_x = ( vel_X_ * cos(delta_th) ) * dt;
+	double delta_y = ( vel_X_ * sin(delta_th) ) * dt;
 	float x = cur_pose_x;
 	float y = cur_pose_y;
 	printf("delta_th : %.3f\n",RAD2DEG(delta_th));
-	printf("dt : %.3f\n",dt);
+	// printf("dt : %.3f\n",dt);
 	printf("vel_Th : %.3f\n",vel_Th);
 	imagine_th_ += delta_th;
-	// float x = cur_pose_x - delta_x;
-	// float y = cur_pose_y - delta_y;
-	imagine_target_pose_x_ = cos(delta_th)*x - sin(delta_th)*y;
-	imagine_target_pose_y_ = sin(delta_th)*x + cos(delta_th)*y;
+	x = cur_pose_x - delta_x;
+	y = cur_pose_y - delta_y;
+	imagine_target_pose_x_ = cos(delta_th)*x + sin(delta_th)*y;
+	imagine_target_pose_y_ = -sin(delta_th)*x + cos(delta_th)*y;
+	printf("atan2 based imagine : %.3f\n",RAD2DEG(atan2(imagine_target_pose_y_,imagine_target_pose_x_)));
 	last_time_ = ros::Time::now();
 }
 
@@ -168,13 +169,18 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 
 			vel_.linear.x = p_distance_gain_ * cur_distance_ + d_distance_gain_ * (cur_distance_ - before_distance_);
 			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * (cur_angle_ - before_angle_);
+			
+
+			// printf("cur_angle_ : %.3f\n",RAD2DEG(cur_angle_));
+			// printf("before_angle_ : %.3f\n",RAD2DEG(before_angle_));
+			// printf("cur_angle_ - before_angle_: %.3f \n ",RAD2DEG(cur_angle_ - before_angle_));
+			// printf("vel_.angular.z : %.3f\n",vel_.angular.z);
 			before_distance_ = cur_distance_;
 			before_angle_ = cur_angle_;
-
 			if(abs(cur_angle_) < angle_Tolerance_)
 			{
 				vel_.angular.z = 0;
-				//pd_flag_ = Moving2TargetPoint;
+				pd_flag_ = Moving2TargetPoint;
 			}
 			cmd_pub_.publish(vel_);
 
@@ -221,7 +227,7 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			if(abs(cur_angle_) < angle_Tolerance_)
 			{
 				vel_.angular.z = 0;
-				pd_flag_ = CorrenctInTolerance;
+				//pd_flag_ = CorrenctInTolerance;
 				
 				return true;
 			}
@@ -250,7 +256,7 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 	vel_X_ = vel_.linear.x;
 	vel_Th_ = vel_.angular.z;
 	ImagineUpdate(target_pose_x, target_pose_y, vel_.linear.x , vel_.angular.z);
-	printf("vel_.angular.z : %.3f\n",vel_.angular.z);
+	// printf("vel_.angular.z : %.3f\n",vel_.angular.z);
 	PrintPD_Var();
 	
     
