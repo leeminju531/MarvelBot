@@ -56,11 +56,11 @@ public:
 
 private:
 	void PredicInit();
-	void PDParamSet();
+	void PDParamGet();
 	void PrintPD_Var();
 	void ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float vel_Th);
 	void ImagineInit();
-	
+	void ParamPrint();
 	ros::NodeHandle node_;
 	string parentFrame_;
 

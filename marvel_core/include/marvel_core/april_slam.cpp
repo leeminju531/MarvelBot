@@ -5,19 +5,26 @@ TagSlam::TagSlam()
 	vel_X_(0),vel_Y_(0),vel_Th_(0),Th_(0)
 {
 	parentFrame_ = "base_footprint";
-	PDParamSet();
-	
+	PDParamGet();
+	ParamPrint();
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 }
 
-void TagSlam::PDParamSet()
+void TagSlam::PDParamGet()
 {
-	distance_Tolerance_ = 0.02;
-	angle_Tolerance_ = DEG2RAD(2);
-	p_distance_gain_ = 0.3;
-	d_distance_gain_ = 0.1;
-	p_angle_gain_ = 0.6;
-	d_angle_gain_ = 0.1;
+	if(!node_.getParam("distance_Tolerance",distance_Tolerance_))
+		distance_Tolerance_ = 0.02;
+	if(!node_.getParam("angle_Tolerance",angle_Tolerance_))
+		angle_Tolerance_ = DEG2RAD(2);
+	if(!node_.getParam("p_distance_gain",p_distance_gain_))
+		p_distance_gain_ = 0.3;
+	if(!node_.getParam("d_distance_gain",d_distance_gain_))
+		d_distance_gain_ = 0.1;
+	if(!node_.getParam("p_angle_gain",p_angle_gain_))
+		p_angle_gain_ = 0.6;
+	if(!node_.getParam("d_angle_gain",d_angle_gain_))
+		d_angle_gain_ = 0.1;
+	 
 	pd_flag_ = Turn2TargetPoint;
 	imagine_target_pose_x_=0;
 	imagine_target_pose_y_=0;
@@ -47,6 +54,7 @@ bool TagSlam::TagDetection(int tagNum)
 
 bool TagSlam::TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th)
 {
+	printf("distance_Tolerance_ : %f\n",distance_Tolerance_);
 	if (!TagDetection(tagNum))	return false;
 
 	float detect_pose_x=0,detect_pose_y=0,detect_pose_th=0;
@@ -171,10 +179,6 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			vel_.angular.z = p_angle_gain_ * cur_angle_ + d_angle_gain_ * (cur_angle_ - before_angle_);
 			
 
-			// printf("cur_angle_ : %.3f\n",RAD2DEG(cur_angle_));
-			// printf("before_angle_ : %.3f\n",RAD2DEG(before_angle_));
-			// printf("cur_angle_ - before_angle_: %.3f \n ",RAD2DEG(cur_angle_ - before_angle_));
-			// printf("vel_.angular.z : %.3f\n",vel_.angular.z);
 			before_distance_ = cur_distance_;
 			before_angle_ = cur_angle_;
 			if(abs(cur_angle_) < angle_Tolerance_)
@@ -256,12 +260,22 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 	vel_X_ = vel_.linear.x;
 	vel_Th_ = vel_.angular.z;
 	ImagineUpdate(target_pose_x, target_pose_y, vel_.linear.x , vel_.angular.z);
-	// printf("vel_.angular.z : %.3f\n",vel_.angular.z);
 	PrintPD_Var();
 	
     
 
     return false;
+}
+void TagSlam::ParamPrint()
+{
+	printf("===============Param Check===================\n");
+	printf("distance_Tolerance : %.3f\n",distance_Tolerance_);
+	printf("angle_Tolerance : %.3f\n",angle_Tolerance_);
+	printf("p_distance_gain : %.3f\n",p_distance_gain_);
+	printf("d_distance_gain : %.3f\n",d_distance_gain_);
+	printf("p_angle_gain : %.3f\n",p_angle_gain_);
+	printf("d_angle_gain : %.3f\n",d_angle_gain_);
+	printf("==============================================\n\n");
 }
 
 void TagSlam::PrintPD_Var()
