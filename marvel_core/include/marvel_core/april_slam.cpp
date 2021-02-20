@@ -2,13 +2,19 @@
 
 TagSlam::TagSlam() 
 :	tfListener_(tfBuffer_),
-	vel_X_(0),vel_Y_(0),vel_Th_(0),Th_(0)
+	vel_X_(0),vel_Y_(0),vel_Th_(0),Th_(0),tTFB_(&TagSlam::CamTFB)
 {
-	parentFrame_ = "base_footprint";
 	PDParamGet();
+	parentFrame_ = "base_footprint";
+	// boost::thread tTFB = boost::thread(&TagSlam::CamTFb,param~);
 	ParamPrint();
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 }
+
+// TagSlam::~TagSlam()
+// {
+// 	//tTFB_.join();
+// }
 
 void TagSlam::PDParamGet()
 {
@@ -24,11 +30,39 @@ void TagSlam::PDParamGet()
 		p_angle_gain_ = 0.6;
 	if(!node_.getParam("d_angle_gain",d_angle_gain_))
 		d_angle_gain_ = 0.1;
-	 
+	
+
 	pd_flag_ = Turn2TargetPoint;
 	imagine_target_pose_x_=0;
 	imagine_target_pose_y_=0;
 	imagine_th_=0;
+}
+
+void TagSlam::CamTFB()
+{
+	
+	tf2_ros::TransformBroadcaster tfb;
+	geometry_msgs::TransformStamped transformStamped;
+
+	transformStamped.header.frame_id = "camera";
+	transformStamped.child_frame_id = "base_footprint";
+	transformStamped.transform.translation.x = 0.0;
+	transformStamped.transform.translation.y = 2.0;
+	transformStamped.transform.translation.z = 0.0;
+	tf2::Quaternion q;
+	q.setRPY(0,0,0);
+	transformStamped.transform.rotation.x = q.x();
+	transformStamped.transform.rotation.y = q.y();
+	transformStamped.transform.rotation.z = q.z();
+	transformStamped.transform.rotation.w = q.w();
+	ros::Rate rate(10.0);
+	while(ros::ok())
+	{
+		transformStamped.header.stamp = ros::Time::now();
+		tfb.sendTransform(transformStamped);
+		rate.sleep();
+	}
+	
 }
 
 bool TagSlam::TagDetection(int tagNum)
@@ -40,7 +74,7 @@ bool TagSlam::TagDetection(int tagNum)
 	}
 	try
 	{	// the TF broadcaster hz have to pass up at least 3.3hz(1/0.3)
-		transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
+		transformStamped_ = tfBuffer_.lookupTransform(baseFrame_,tagFrame[tagNum],
 			ros::Time::now(),ros::Duration(0.2));
 	}
 	catch(tf2::TransformException &ex)
@@ -206,19 +240,27 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			before_distance_ = cur_distance_;
 			before_angle_ = cur_angle_;
 
+
+			if(cur_angle_ > angle_Tolerance_ )
+			{
+				vel_.linear.x = 0;
+				vel_.angular.z = 0;
+				pd_flag_ = Turn2TargetPoint;
+			}
 			if( cur_distance_ < distance_Tolerance_)
 			{
 				vel_.linear.x = 0;
 				vel_.angular.z = 0;
-				pd_flag_ = Turn2TargetOrientation;
-			}	
+				pd_flag_ = Turn2TagOrientation;
+			}
+
 			cmd_pub_.publish(vel_);
 
 			break;
 
 		
 
-		case Turn2TargetOrientation:
+		case Turn2TagOrientation:
 
 			cur_angle_ = target_pose_th;
 			cur_distance_ = 0;
@@ -239,20 +281,7 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			
 			break;
 
-		case CorrenctInTolerance:
-
-			/* 
-			control 
-			*/
-
-			if(abs(cur_angle_) < angle_Tolerance_ && cur_distance_ < distance_Tolerance_)
-			{
-				vel_.linear.x = 0;
-				vel_.angular.z = 0;
-				pd_flag_ = Turn2TargetOrientation;
-			}
-			cmd_pub_.publish(vel_);
-			break;
+		
 			
 	}
 	target_pose_x_ = x;

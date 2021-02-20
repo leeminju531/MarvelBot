@@ -4,12 +4,15 @@
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2/LinearMath/Quaternion.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <string>
 #include <geometry_msgs/Twist.h>
 #include <tf/transform_listener.h>
 #include <iostream>
 #include <math.h>
+#include <boost/thread/thread.hpp>
+
 
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
@@ -31,16 +34,9 @@ enum _PD
 {
 	Turn2TargetPoint,
 	Moving2TargetPoint,
-	CorrenctInTolerance,
-	Turn2TargetOrientation
+	Turn2TagOrientation
 };
 
-// enum _PD
-// {
-// 	Point_Angular,
-// 	Point_Linear_Angular,
-// 	Target_Angular
-// };
 
 int tagSize =6;
 string tagFrame[] = {"tag_0","tag_1","tag_2","tag_3","tag_4","tag_5"};
@@ -49,6 +45,7 @@ class TagSlam
 {
 public:
 	TagSlam();
+	//~TagSlam();
 	bool TagDetection(int tagNum);
 	bool TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th);
 	bool TagLocation(int tagNum, float tag_pose_th);
@@ -61,6 +58,7 @@ private:
 	void ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float vel_Th);
 	void ImagineInit();
 	void ParamPrint();
+	static void CamTFB();
 	ros::NodeHandle node_;
 	string parentFrame_;
 
@@ -85,6 +83,8 @@ private:
 	float imagine_target_pose_x_,imagine_target_pose_y_,imagine_th_;
 	float target_pose_x_,target_pose_y_;
 	double vel_X_,vel_Y_,vel_Th_;
+	boost::thread tTFB_;
+	string camFrame_,baseFrame_;
 };
 
 
