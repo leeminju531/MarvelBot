@@ -58,13 +58,13 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 999
       Frames:
-        All Enabled: false
+        All Enabled: true
         base_footprint:
           Value: true
         camera:
-          Value: false
+          Value: true
         odom:
-          Value: false
+          Value: true
         tag_0:
           Value: true
       Marker Scale: 1
@@ -107,21 +107,26 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
-      Class: rviz/TopDownOrtho
+      Class: rviz/ThirdPersonFollower
+      Distance: 3.0233383178710938
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 521.93505859375
+      Pitch: 0.25539785623550415
       Target Frame: <Fixed Frame>
-      Value: TopDownOrtho (rviz)
-      X: 0.15248115360736847
-      Y: 0.3797070384025574
+      Value: ThirdPersonFollower (rviz)
+      Yaw: 0.06539841741323471
     Saved: ~
 Window Geometry:
   Displays:
@@ -140,4 +145,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 720
-  Y: 58
+  Y: 28

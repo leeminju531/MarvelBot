@@ -2,11 +2,11 @@
 
 TagSlam::TagSlam() 
 :	tfListener_(tfBuffer_),
-	vel_X_(0),vel_Y_(0),vel_Th_(0),Th_(0),tTFB_(&TagSlam::CamTFB)
+	vel_X_(0),vel_Y_(0),vel_Th_(0),Th_(0)
 {
-	PDParamGet();
-	parentFrame_ = "base_footprint";
-	// boost::thread tTFB = boost::thread(&TagSlam::CamTFb,param~);
+	ParamGet();
+	tTFB_ = boost::thread(&TagSlam::CamTFB,baseFrame_,camFrame_,
+			base_cam_x_,base_cam_y_, base_cam_z_, base_cam_yaw_);
 	ParamPrint();
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 }
@@ -15,7 +15,27 @@ TagSlam::TagSlam()
 // {
 // 	//tTFB_.join();
 // }
+void TagSlam::ParamGet()
+{
+	PDParamGet();
+	if(!node_.getParam("BaseFrame",baseFrame_))
+		baseFrame_ = "base_footprint";
+	if(!node_.getParam("CamFrame",camFrame_))
+		camFrame_ = "camera";
+	if(!node_.getParam("Camera_X_From_BaseFrame",base_cam_x_))
+		base_cam_x_ = 0;
+	if(!node_.getParam("Camera_Y_From_BaseFrame",base_cam_y_))
+		base_cam_y_ = 0;
+	if(!node_.getParam("Camera_Z_From_BaseFrame",base_cam_z_))
+		base_cam_z_ = 0.3;
+	if(!node_.getParam("Camera_Yaw_From_BaseFrame",base_cam_yaw_)){
+		base_cam_yaw_ = DEG2RAD(90);
+	}else{
+		base_cam_yaw_ = DEG2RAD(base_cam_yaw_); // input th unit : degree
+	}
 
+
+}
 void TagSlam::PDParamGet()
 {
 	if(!node_.getParam("distance_Tolerance",distance_Tolerance_))
@@ -31,26 +51,26 @@ void TagSlam::PDParamGet()
 	if(!node_.getParam("d_angle_gain",d_angle_gain_))
 		d_angle_gain_ = 0.1;
 	
-
 	pd_flag_ = Turn2TargetPoint;
 	imagine_target_pose_x_=0;
 	imagine_target_pose_y_=0;
 	imagine_th_=0;
 }
 
-void TagSlam::CamTFB()
+void TagSlam::CamTFB(string baseFrame,string childFrame,double cam_x_from_base,
+		double cam_y_from_base,double cam_z_from_base, double cam_yaw_from_base)
 {
 	
 	tf2_ros::TransformBroadcaster tfb;
 	geometry_msgs::TransformStamped transformStamped;
 
-	transformStamped.header.frame_id = "camera";
-	transformStamped.child_frame_id = "base_footprint";
-	transformStamped.transform.translation.x = 0.0;
-	transformStamped.transform.translation.y = 2.0;
-	transformStamped.transform.translation.z = 0.0;
+	transformStamped.header.frame_id = baseFrame;
+	transformStamped.child_frame_id = childFrame;
+	transformStamped.transform.translation.x = cam_x_from_base;
+	transformStamped.transform.translation.y = cam_y_from_base;
+	transformStamped.transform.translation.z = cam_z_from_base;
 	tf2::Quaternion q;
-	q.setRPY(0,0,0);
+	q.setRPY(0,0,cam_yaw_from_base);
 	transformStamped.transform.rotation.x = q.x();
 	transformStamped.transform.rotation.y = q.y();
 	transformStamped.transform.rotation.z = q.z();
@@ -88,7 +108,7 @@ bool TagSlam::TagDetection(int tagNum)
 
 bool TagSlam::TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th)
 {
-	printf("distance_Tolerance_ : %f\n",distance_Tolerance_);
+	
 	if (!TagDetection(tagNum))	return false;
 
 	float detect_pose_x=0,detect_pose_y=0,detect_pose_th=0;
@@ -100,7 +120,7 @@ bool TagSlam::TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float t
 	{
 		try
 		{
-			transformStamped_ = tfBuffer_.lookupTransform(parentFrame_,tagFrame[tagNum],
+			transformStamped_ = tfBuffer_.lookupTransform(baseFrame_,tagFrame[tagNum],
 			ros::Time::now(),ros::Duration(0.2));
 
 		}catch(tf2::TransformException &ex)
@@ -289,7 +309,7 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 	vel_X_ = vel_.linear.x;
 	vel_Th_ = vel_.angular.z;
 	ImagineUpdate(target_pose_x, target_pose_y, vel_.linear.x , vel_.angular.z);
-	PrintPD_Var();
+	
 	
     
 
@@ -307,19 +327,3 @@ void TagSlam::ParamPrint()
 	printf("==============================================\n\n");
 }
 
-void TagSlam::PrintPD_Var()
-{
-	// printf("flag : %d \n",pd_flag_);
-	// printf("linearVel : %.3f\n",vel_.linear.x);
-	// printf("angularVel : %.3f\n",vel_.angular.z);
-	// printf("cur_angle_ : %.3f || angle_Tolerance_ : %.3f \n",RAD2DEG(cur_angle_),RAD2DEG(angle_Tolerance_));
-	// //printf("linear_Vel_ : %.3f || distance_Tolerance : %.3f\n")
-	
-	// // printf("Th_ : %.3f || vel_X_: %.3f || vel_Y_ : %.3f\n",Th_,vel_X_,vel_Y_);
-	// printf("imagine_target_pose_x_ : %.3f || imagine_target_pose_y_ : %.3f\n",imagine_target_pose_x_,imagine_target_pose_y_);
-	// printf("detected target_pose_x_ : %.3f || target_pose_y_ : %.3f\n",
-	// 	target_pose_x_,target_pose_y_);
-	// printf("Predicted imagine_pose_x_:%.3f || imagine_pose_y_ : %.3f\n ",
-	// 	imagine_target_pose_x_,imagine_target_pose_y_);
-	// printf("predicted imagine_th_ : %.3f\n",RAD2DEG(imagine_th_));
-}

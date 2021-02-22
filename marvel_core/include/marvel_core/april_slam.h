@@ -50,29 +50,26 @@ public:
 	bool TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th);
 	bool TagLocation(int tagNum, float tag_pose_th);
 	bool PDControl(float target_pose_x,float target_pose_y, float target_pose_th);
-
+	static void CamTFB(string baseFrame,string childFrame,double cam_x_from_base,
+		double cam_y_from_base,double cam_z_from_base, double cam_yaw_from_base);
 private:
 	void PredicInit();
+	void ParamGet();
 	void PDParamGet();
-	void PrintPD_Var();
 	void ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float vel_Th);
 	void ImagineInit();
 	void ParamPrint();
-	static void CamTFB();
-	ros::NodeHandle node_;
-	string parentFrame_;
 
+	
+	ros::NodeHandle node_;
 	tf2_ros::Buffer tfBuffer_; // why have to define here??
 	geometry_msgs::TransformStamped transformStamped_;
 	tf2_ros::TransformListener tfListener_;
-
 	ros::Publisher cmd_pub_;
 	geometry_msgs::Twist vel_;
 	
-
 	//for predict updating
 	ros::Time last_time_,current_time_;
-	
 	double before_distance_,before_angle_;
 	double cur_distance_,cur_angle_;
 	double p_distance_gain_,d_distance_gain_;
@@ -84,7 +81,11 @@ private:
 	float target_pose_x_,target_pose_y_;
 	double vel_X_,vel_Y_,vel_Th_;
 	boost::thread tTFB_;
+
+	// Parameter 
 	string camFrame_,baseFrame_;
+	double base_cam_x_,base_cam_y_,base_cam_z_;
+	double base_cam_yaw_;
 };
 
 
