@@ -3,7 +3,7 @@
 
 <node pkg="marvel_core" type ="temp_motor" name="temp_motor"/>
 
-<node pkg="marvel_core" type ="main" name="main" />
+
 
 <arg name ="cam_port" default="/dev/video2"/>
 
@@ -48,4 +48,14 @@
   <node pkg="image_view" type="image_view" name="image_view" args="image:=/tag_detections_image"/>
 
   <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_core)/rviz/tag_slam.rviz" />
+
+
+  <rosparam file="$(find marvel_core)/config/April_control.yaml" command="load" />
+  <node pkg="marvel_core" type ="main" name="main" output="screen"/>
+
+
+
+
+
+
 </launch>

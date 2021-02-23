@@ -1,9 +1,0 @@
-
-distance_Tolerance: 0.1
-# angle_Tolerance:  # note ) unit : rad 
-
-p_distance_gain: 0.3
-d_distance_gain: 0.1
-
-p_angle_gain: 0.6
-d_angle_gain: 0.1

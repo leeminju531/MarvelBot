@@ -1,4 +1,6 @@
 #include "april_slam.h"
+#include <string>
+using namespace std;
 
 TagSlam::TagSlam() 
 :	tfListener_(tfBuffer_),
@@ -40,8 +42,11 @@ void TagSlam::PDParamGet()
 {
 	if(!node_.getParam("distance_Tolerance",distance_Tolerance_))
 		distance_Tolerance_ = 0.02;
-	if(!node_.getParam("angle_Tolerance",angle_Tolerance_))
+	if(!node_.getParam("angle_Tolerance",angle_Tolerance_)){
 		angle_Tolerance_ = DEG2RAD(2);
+	}else{// input angle_Tolerance_ unit : degree
+		angle_Tolerance_ = DEG2RAD(angle_Tolerance_);
+	}
 	if(!node_.getParam("p_distance_gain",p_distance_gain_))
 		p_distance_gain_ = 0.3;
 	if(!node_.getParam("d_distance_gain",d_distance_gain_))
@@ -293,7 +298,7 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 			if(abs(cur_angle_) < angle_Tolerance_)
 			{
 				vel_.angular.z = 0;
-				//pd_flag_ = CorrenctInTolerance;
+				pd_flag_ = Turn2TargetPoint;
 				
 				return true;
 			}
@@ -317,13 +322,22 @@ bool TagSlam::PDControl(float target_pose_x,float target_pose_y, float target_po
 }
 void TagSlam::ParamPrint()
 {
-	printf("===============Param Check===================\n");
-	printf("distance_Tolerance : %.3f\n",distance_Tolerance_);
-	printf("angle_Tolerance : %.3f\n",angle_Tolerance_);
+	printf("===============PD Parameter Check=============\n");
+	printf("distance_Tolerance : %.3f (m)\n",distance_Tolerance_);
+	printf("angle_Tolerance : %.3f (Degree)\n",RAD2DEG(angle_Tolerance_));
 	printf("p_distance_gain : %.3f\n",p_distance_gain_);
 	printf("d_distance_gain : %.3f\n",d_distance_gain_);
 	printf("p_angle_gain : %.3f\n",p_angle_gain_);
 	printf("d_angle_gain : %.3f\n",d_angle_gain_);
 	printf("==============================================\n\n");
+	printf("===============Frame Parameter Check=============\n");
+	printf("BaseFrame : %s \n",baseFrame_.c_str());
+	printf("Camera Frame : %s \n",camFrame_.c_str());
+	printf("Camera_X_From_BaseFrame : %.2f (m)\n",base_cam_x_);
+	printf("Camera_Y_From_BaseFrame : %.2f (m)\n",base_cam_y_);
+	printf("Camera_Z_From_BaseFrame : %.2f (m)\n",base_cam_z_);
+	printf("Camera_Yaw_From_BaseFrame : %.2f (Degree)\n",RAD2DEG(base_cam_yaw_));
+
+
 }
 

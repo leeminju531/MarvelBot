@@ -1,5 +1,5 @@
-#ifndef APRIL_H
-#define APRIL_H
+#ifndef __APRIL_H_
+#define __APRIL_H_
 
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
@@ -49,9 +49,7 @@ public:
 	bool TagDetection(int tagNum);
 	bool TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th);
 	bool TagLocation(int tagNum, float tag_pose_th);
-	bool PDControl(float target_pose_x,float target_pose_y, float target_pose_th);
-	static void CamTFB(string baseFrame,string childFrame,double cam_x_from_base,
-		double cam_y_from_base,double cam_z_from_base, double cam_yaw_from_base);
+	
 private:
 	void PredicInit();
 	void ParamGet();
@@ -59,7 +57,9 @@ private:
 	void ImagineUpdate(float cur_pose_x,float cur_pose_y,float vel_X,float vel_Th);
 	void ImagineInit();
 	void ParamPrint();
-
+	bool PDControl(float target_pose_x,float target_pose_y, float target_pose_th);
+	static void CamTFB(string baseFrame,string childFrame,double cam_x_from_base,
+		double cam_y_from_base,double cam_z_from_base, double cam_yaw_from_base);
 	
 	ros::NodeHandle node_;
 	tf2_ros::Buffer tfBuffer_; // why have to define here??
