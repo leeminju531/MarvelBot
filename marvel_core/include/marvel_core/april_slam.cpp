@@ -1,6 +1,4 @@
 
-// #include <string>
-// using namespace std;
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -89,6 +87,9 @@ private:
 	string camFrame_,baseFrame_;
 	double base_cam_x_,base_cam_y_,base_cam_z_;
 	double base_cam_yaw_;
+
+	std::vector<string> tag_;
+	int tag_num_;
 };
 
 TagSlam::TagSlam() 
@@ -104,10 +105,8 @@ TagSlam::TagSlam()
 
 TagSlam::~TagSlam()
 {
-	//tTFB_.join();
-	// tf2::BufferCore::~BufferCore();
-
-	// tf2_ros::TransformListener::~TransformListener();
+	tTFB_.join();
+	
 }
 void TagSlam::ParamGet()
 {
@@ -127,7 +126,9 @@ void TagSlam::ParamGet()
 	}else{
 		base_cam_yaw_ = DEG2RAD(base_cam_yaw_); // input th unit : degree
 	}
-
+	node_.getParam("Tag",tag_);
+	tag_num_ = (int)tag_.size();
+			
 
 }
 void TagSlam::PDParamGet()
@@ -435,6 +436,9 @@ void TagSlam::ParamPrint()
 	printf("Camera_Z_From_BaseFrame : %.2f (m)\n",base_cam_z_);
 	printf("Camera_Yaw_From_BaseFrame : %.2f (Degree)\n",RAD2DEG(base_cam_yaw_));
 
-
+	printf("Detection Available Tag : ");
+	for(int i=0;i<tag_num_;i++)
+		printf("%s ",tag_[i].c_str());
+	printf("\n");
 }
 

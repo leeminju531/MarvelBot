@@ -1,16 +1,3 @@
-
-
-###### PD Control Parameter Setting ############
-distance_Tolerance: 0.1 # unit : meter
-angle_Tolerance: 3      # unit : degree
-
-p_distance_gain: 0.3
-d_distance_gain: 0.1
-
-p_angle_gain: 0.6
-d_angle_gain: 0.1
-#################################################
-
 ###### Frame Parameter Setting ##################
 BaseFrame: base_footprint
 CamFrame: camera
@@ -18,3 +5,12 @@ Camera_X_From_BaseFrame: 0
 Camera_Y_From_BaseFrame: 0
 Camera_Z_From_BaseFrame: 0.3
 Camera_Yaw_From_BaseFrame: 90  # unit : degree 
+###### PD Control Parameter Setting ############
+distance_Tolerance: 0.1 # unit : meter
+angle_Tolerance: 3      # unit : degree
+p_distance_gain: 0.3
+d_distance_gain: 0.1
+p_angle_gain: 0.6
+d_angle_gain: 0.1
+#################################################
+Tag: ["tag_0","tag_1","tag_2","tag_0"]
