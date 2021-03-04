@@ -14,10 +14,11 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf2
   geometry_msgs
+
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -121,11 +122,11 @@ catkin_package(
 
 set(MARVEL_DIR include/marvel_core/)
 file(GLOB MARVEL_CPPS ${MARVEL_DIR}*.cpp)
-file(GLOB MARVEL_HEADERS ${MARVEL_DIR}*.h)
+#file(GLOB MARVEL_HEADERS ${MARVEL_DIR}*.h)
 
-add_library(mylib ${MARVEL_CPPS} ${MARVEL_HEADERS})
+add_library(mylib ${MARVEL_CPPS} )
 
-include_directories(include  ${catkin_INCLUDE_DIRS} ${MARVEL_DIR})
+include_directories(include  ${catkin_INCLUDE_DIRS} ${MARVEL_DIR} ${Boost_INCLUDE_DIRS})
 
 
 

@@ -1,4 +1,4 @@
-#include "april_slam.h"
+#include "april_slam.cpp"
 #include <ros/ros.h>
 int main(int argc,char** argv)
 {
@@ -10,7 +10,7 @@ int main(int argc,char** argv)
 
 	while(ros::ok())
 	{
-		if(tag.TagLocation(tag0,0))	break;
+		if(tag.TagDetection(tag0))	break;
 		
 	}
 	
