@@ -10,7 +10,7 @@ int main(int argc,char** argv)
 
 	while(ros::ok())
 	{
-		if(tag.TagDetection(tag0))	break;
+		// if(tag.TagDetection(tag0))	break;
 		
 	}
 	

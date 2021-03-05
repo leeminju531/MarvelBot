@@ -127,6 +127,7 @@ void TagSlam::ParamGet()
 		base_cam_yaw_ = DEG2RAD(base_cam_yaw_); // input th unit : degree
 	}
 	node_.getParam("Tag",tag_);
+	tag_.assign(1,"zz");
 	tag_num_ = (int)tag_.size();
 			
 
@@ -435,10 +436,23 @@ void TagSlam::ParamPrint()
 	printf("Camera_Y_From_BaseFrame : %.2f (m)\n",base_cam_y_);
 	printf("Camera_Z_From_BaseFrame : %.2f (m)\n",base_cam_z_);
 	printf("Camera_Yaw_From_BaseFrame : %.2f (Degree)\n",RAD2DEG(base_cam_yaw_));
-
+	
 	printf("Detection Available Tag : ");
 	for(int i=0;i<tag_num_;i++)
 		printf("%s ",tag_[i].c_str());
 	printf("\n");
+
+
+	string* AvailableTag = new string[tag_num_];
+	for(int i=0;i<tag_num_;i++)
+	{
+		AvailableTag[i] = tag_[i].c_str();
+	}
+
+
+	for(int i=0;i<tag_num_;i++)
+		printf("%s ",AvailableTag[i].c_str());
+	printf("\n");
+	delete[] AvailableTag;
 }
 

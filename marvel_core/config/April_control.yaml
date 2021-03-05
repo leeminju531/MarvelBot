@@ -13,4 +13,4 @@ d_distance_gain: 0.1
 p_angle_gain: 0.6
 d_angle_gain: 0.1
 #################################################
-Tag: ["tag_0","tag_1","tag_2","tag_0"]
+Tag: ["tag_0","tag_1","tag_2","tag_3"]
