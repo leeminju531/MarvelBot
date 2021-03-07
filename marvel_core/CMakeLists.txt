@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf2
   geometry_msgs
+  message_generation
 
 )
 
@@ -51,11 +52,12 @@ find_package(Boost REQUIRED COMPONENTS system)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
+ add_message_files(
+   FILES
+   DetectionTag.msg
 #   Message1.msg
 #   Message2.msg
-# )
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -72,10 +74,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,7 +111,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES marvel_core
-  CATKIN_DEPENDS roscpp rospy std_msgs tf tf2
+  CATKIN_DEPENDS roscpp rospy std_msgs tf tf2 message_runtime
   DEPENDS system_lib
 )
 

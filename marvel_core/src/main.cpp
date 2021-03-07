@@ -8,11 +8,11 @@ int main(int argc,char** argv)
 	// Marvel marvel;
 	// marvel.Start();
 
-	while(ros::ok())
-	{
-		// if(tag.TagDetection(tag0))	break;
+	// while(ros::ok())
+	// {
+		tag.tempPub();
 		
-	}
+	
 	
 	return 0;
 }

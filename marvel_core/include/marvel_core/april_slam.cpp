@@ -11,7 +11,7 @@
 #include <iostream>
 #include <math.h>
 #include <boost/thread/thread.hpp>
-
+#include "marvel_core/DetectionTag.h"
 
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
@@ -49,6 +49,7 @@ public:
 	bool TagLocation(int tagNum, float tag_pose_x,float tag_pose_y, float tag_pose_th);
 	bool TagLocation(int tagNum, float tag_pose_th);
 	
+	void tempPub();
 private:
 	void PredicInit();
 	void ParamGet();
@@ -60,6 +61,7 @@ private:
 	static void CamTFB(string baseFrame,string childFrame,double cam_x_from_base,
 		double cam_y_from_base,double cam_z_from_base, double cam_yaw_from_base);
 	void TargetFB();
+	
 
 	
 	ros::NodeHandle node_;
@@ -90,7 +92,11 @@ private:
 
 	std::vector<string> tag_;
 	int tag_num_;
-};
+
+	
+	marvel_core::DetectionTag tag_msgs_;
+	ros::Publisher tag_pub_;
+	};
 
 TagSlam::TagSlam() 
 :	tfListener_(tfBuffer_),
@@ -101,12 +107,32 @@ TagSlam::TagSlam()
 			base_cam_x_,base_cam_y_, base_cam_z_, base_cam_yaw_);
 	ParamPrint();
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
+
+	tag_pub_ = node_.advertise<marvel_core::DetectionTag>("asd",10);
+
 }
 
 TagSlam::~TagSlam()
 {
 	tTFB_.join();
 	
+}
+void TagSlam::tempPub()
+{
+	ros::Rate rate(10.0);
+	while(ros::ok())
+	{
+		tag_msgs_.tag.clear();
+		tag_msgs_.tag.push_back("1zz");
+		tag_msgs_.tag.push_back("2zz");
+		tag_msgs_.tag.push_back("3zz");
+		tag_msgs_.count = 3;
+		tag_pub_.publish(tag_msgs_);
+		rate.sleep();
+	}
+	
+
+
 }
 void TagSlam::ParamGet()
 {
