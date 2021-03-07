@@ -12,7 +12,7 @@
 #include <math.h>
 #include <boost/thread/thread.hpp>
 #include "marvel_core/DetectionTag.h"
-
+#include <queue>
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
 #define DEG2RAD(X) ((X)*PI/180.)
@@ -91,11 +91,19 @@ private:
 	double base_cam_yaw_;
 
 	std::vector<string> tag_;
+	string* Available_Tag_;
 	int tag_num_;
 
 	
 	marvel_core::DetectionTag tag_msgs_;
 	ros::Publisher tag_pub_;
+
+	boost::thread tag_thr_;
+	static void TagPublisher(string* Available_Tag_,int tag_num_);
+	// queue<string> q_;
+
+
+
 	};
 
 TagSlam::TagSlam() 
@@ -108,8 +116,36 @@ TagSlam::TagSlam()
 	ParamPrint();
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 
-	tag_pub_ = node_.advertise<marvel_core::DetectionTag>("asd",10);
+	tag_pub_ = node_.advertise<marvel_core::DetectionTag>("tag_detector",10);
 
+	tag_thr_ = boost::thread(&TagSlam::TagPublisher,Available_Tag_,tag_num_);
+}
+void TagSlam::TagPublisher(string* Available_Tag_,int tag_num_)
+{
+	queue<string> q_;
+	for(int i=0;i<tag_num_;i++)
+		q_.push(Available_Tag_[i]);
+
+	ros::Rate rate(10.0);
+	while(ros::ok())
+	{
+// 		//mutex1
+// 		//if worker queue is Empty
+// 		//else unlock mutex1
+
+// 		//mutex2
+// 		//publish tag_pub_
+// 		//mutex2 
+
+// 		// full worker queue 
+// 		// unlock mutex1
+		// if(q_.empty())
+		// 	q_.push(Available_Tag_[0]);
+
+		cout << q_.size()<<endl ;
+ 		rate.sleep();
+
+	}
 }
 
 TagSlam::~TagSlam()
@@ -153,8 +189,12 @@ void TagSlam::ParamGet()
 		base_cam_yaw_ = DEG2RAD(base_cam_yaw_); // input th unit : degree
 	}
 	node_.getParam("Tag",tag_);
-	tag_.assign(1,"zz");
+	// tag_.assign(1,"zz");
 	tag_num_ = (int)tag_.size();
+
+	Available_Tag_ = new string[tag_num_];
+	for(int i=0;i<tag_num_;i++)
+		Available_Tag_[i] = tag_[i].c_str();
 			
 
 }
