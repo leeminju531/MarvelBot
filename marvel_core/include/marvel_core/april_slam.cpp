@@ -154,11 +154,8 @@ void TagSlam::TagPublisher(string* Available_Tag_,string baseFrame,int tag_num,c
 
 			msg_mutex.unlock();
 		}
-		
 		que_mutex.unlock();
-		
-		
-
+	
 		rate.sleep();
 	}
 	for(int i=0; i<worker_num ; i++)
@@ -186,19 +183,23 @@ void TagSlam::WorkerThread(string baseFrame)
 				ros::Time::now(),ros::Duration(0.2));
 			}
 			catch(tf2::TransformException &ex)
-			{}
-
-			if(tfBuffer._frameExists(tagFrame))
 			{
-				msg_mutex.lock();
-				tag_msgs.tag.push_back(tagFrame);
-				msg_mutex.unlock();
+				goto skip;
 			}
+			msg_mutex.lock();
+			// cycle search equal tag msg
+			// if exist -> not push
+			// else -> push
 			
-		}else{
+			tag_msgs.tag.push_back(tagFrame);
+			msg_mutex.unlock();
+			
+		}
+		else
+		{
 			que_mutex.unlock();
 		}
-		
+		skip:
 		
 		
 		rate.sleep();
