@@ -34,7 +34,12 @@ marvel_core::DetectionTag tag_msgs;
 ros::Publisher tag_pub;
 boost::mutex msg_mutex;
 
-tf2_ros::Buffer tfBuffer; 
+boost::mutex rc_mutex;
+int r_count = 0;
+boost::mutex rw_mutex;
+
+
+tf2_ros::Buffer tfBuffer; // threads use tfBuffer Only Reader. not Necessary mutex 
 
 enum _PD_Control_Order
 {
@@ -131,6 +136,7 @@ void TagSlam::TagPublisher(string* Available_Tag_,string baseFrame,int tag_num,c
 	ros::Rate rate(10.0);
 	while(ros::ok())
 	{
+		rw_mutex.lock();
 		que_mutex.lock();
 		if(tagQue.empty())
 		{
@@ -148,14 +154,13 @@ void TagSlam::TagPublisher(string* Available_Tag_,string baseFrame,int tag_num,c
 
 			// publish detection tag msg
 			msg_mutex.lock();
-
 			tag_pub.publish(tag_msgs);
 			tag_msgs.tag.clear();
-
 			msg_mutex.unlock();
 		}
 		que_mutex.unlock();
-	
+		rw_mutex.unlock();
+
 		rate.sleep();
 	}
 	for(int i=0; i<worker_num ; i++)
@@ -170,6 +175,13 @@ void TagSlam::WorkerThread(string baseFrame)
 	while(ros::ok())
 	{
 		// geometry_msgs::TransformStamped transformStamped;
+
+		rc_mutex.lock();
+		r_count++;
+		if(r_count == 1)
+			rw_mutex.lock();
+		rc_mutex.unlock();
+
 		que_mutex.lock();
 		if(!tagQue.empty())
 		{
@@ -187,19 +199,19 @@ void TagSlam::WorkerThread(string baseFrame)
 				goto skip;
 			}
 			msg_mutex.lock();
-			// cycle search equal tag msg
-			// if exist -> not push
-			// else -> push
-			
 			tag_msgs.tag.push_back(tagFrame);
-			msg_mutex.unlock();
-			
+			msg_mutex.unlock();	
 		}
 		else
 		{
 			que_mutex.unlock();
 		}
 		skip:
+		rc_mutex.lock();
+		r_count--;
+		if(r_count == 0)
+			rw_mutex.unlock();
+		rc_mutex.unlock();
 		
 		
 		rate.sleep();
