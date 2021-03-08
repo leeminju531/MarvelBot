@@ -1,4 +1,3 @@
-
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -13,6 +12,9 @@
 #include <boost/thread/thread.hpp>
 #include "marvel_core/DetectionTag.h"
 #include <queue>
+#include <boost/thread/mutex.hpp>
+
+
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
 #define DEG2RAD(X) ((X)*PI/180.)
@@ -39,6 +41,16 @@ enum _PD
 
 int tagSize =6;
 string tagFrame[] = {"tag_0","tag_1","tag_2","tag_3","tag_4","tag_5"};
+
+
+std::queue<string> q_; // store detecting avable tag repeatly
+boost::mutex que_mutex; // for worker thread checking Queue mutex
+
+
+marvel_core::DetectionTag tag_msgs_;
+ros::Publisher tag_pub_;
+boost::mutex msg_mutex;
+
 
 class TagSlam
 {
@@ -95,16 +107,14 @@ private:
 	int tag_num_;
 
 	
-	marvel_core::DetectionTag tag_msgs_;
-	ros::Publisher tag_pub_;
+	
 
 	boost::thread tag_thr_;
-	static void TagPublisher(string* Available_Tag_,int tag_num_);
+	static void TagPublisher(string* Available_Tag_,int tag_num_,const int worker_num);
 	// queue<string> q_;
-
-
-
-	};
+	static void WorkThread();
+	
+};
 
 TagSlam::TagSlam() 
 :	tfListener_(tfBuffer_),
@@ -118,14 +128,23 @@ TagSlam::TagSlam()
 
 	tag_pub_ = node_.advertise<marvel_core::DetectionTag>("tag_detector",10);
 
-	tag_thr_ = boost::thread(&TagSlam::TagPublisher,Available_Tag_,tag_num_);
+	tag_thr_ = boost::thread(&TagSlam::TagPublisher,Available_Tag_,tag_num_,4);
 }
-void TagSlam::TagPublisher(string* Available_Tag_,int tag_num_)
+void TagSlam::TagPublisher(string* Available_Tag_,int tag_num_,const int worker_num)
 {
-	queue<string> q_;
+	
+	boost::thread work[worker_num];
+	for(int i=0; i<worker_num ; i++)
+		work[i] = boost::thread(&TagSlam::WorkThread);
+
+	std::queue<string> q_;
 	for(int i=0;i<tag_num_;i++)
 		q_.push(Available_Tag_[i]);
 
+
+	// for(int i=0 ; i<worker_num ; i++ )
+	// 	work[i] = boost::thread(&TagSlam::WorkThread);
+	
 	ros::Rate rate(10.0);
 	while(ros::ok())
 	{
@@ -143,9 +162,28 @@ void TagSlam::TagPublisher(string* Available_Tag_,int tag_num_)
 		// 	q_.push(Available_Tag_[0]);
 
 		cout << q_.size()<<endl ;
+		// q_.pop();
+		// cout << temp << endl;
  		rate.sleep();
 
 	}
+	for(int i=0; i<worker_num ; i++)
+		work[i].join();
+
+	printf(" end of parent thread\n");
+}
+
+void TagSlam::WorkThread()
+{
+	ros::Rate rate(10);
+	while(ros::ok())
+	{
+		printf("Worker Thread1\n");
+		printf("Worker Thread2\n");
+		rate.sleep();
+	}
+	printf(" end of worker Thread\n");
+	return ;
 }
 
 TagSlam::~TagSlam()
@@ -189,7 +227,7 @@ void TagSlam::ParamGet()
 		base_cam_yaw_ = DEG2RAD(base_cam_yaw_); // input th unit : degree
 	}
 	node_.getParam("Tag",tag_);
-	// tag_.assign(1,"zz");
+	tag_.assign(1,"zz");
 	tag_num_ = (int)tag_.size();
 
 	Available_Tag_ = new string[tag_num_];
