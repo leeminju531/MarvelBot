@@ -1,0 +1,16 @@
+string tag
+float64 x # meter
+float64 y 
+float64 th # degree 
+---
+int32 response
+
+# response is one of three case. 
+# 1) response = -1 -> fail to tag detection 
+# (at this case, immediately response)
+
+# 2) response = 0 -> tag Location Fail (Imagine Locate success)
+# internationally, locate to requestion tag location 
+
+# 3) response = 1 -> Location Success 
+

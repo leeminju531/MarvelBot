@@ -11,8 +11,17 @@
 #include <math.h>
 #include <boost/thread/thread.hpp>
 #include "marvel_core/DetectionTag.h"
+#include "marvel_core/TagLocation.h"
 #include <queue>
 #include <boost/thread/mutex.hpp>
+
+// this part have to try real test
+// refer to : https://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
+//			  http://edu.gaitech.hk/turtlebot/map-navigation.html		
+// #include <move_base_msgs/MoveBaseAction.h>
+// #include <actionlib/client/simple_action_client.h>
+
+
 
 #define PI 3.141592
 #define RAD2DEG(x) ((x)*180./PI)
@@ -34,6 +43,7 @@ marvel_core::DetectionTag tag_msgs;
 ros::Publisher tag_pub;
 boost::mutex msg_mutex;
 
+// thread workers, parent -> reader writer problem
 boost::mutex rc_mutex;
 int r_count = 0;
 boost::mutex rw_mutex;
@@ -97,6 +107,8 @@ private:
 	int worker_num_;
 	static void TagPublisher(string* Available_Tag_,string baseFrame,int tag_num_,const int worker_num);
 	static void WorkerThread(string baseFrame);
+
+	void TagLocation(marvel_core::TagLocation)
 };
 
 TagSlam::TagSlam(ros::NodeHandle& nh)
@@ -107,6 +119,7 @@ TagSlam::TagSlam(ros::NodeHandle& nh)
 	
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 	tag_pub = node_.advertise<marvel_core::DetectionTag>("tag_detector",10);
+	ros::ServiceServer service = node_.advertise("Location_On_Tag",this->TagLocation);
 
 	// publish TF relation base_footprintf and camera  
 	tTFB_ = boost::thread(&TagSlam::CamTFB,baseFrame_,camFrame_,
@@ -114,6 +127,16 @@ TagSlam::TagSlam(ros::NodeHandle& nh)
 	tag_thr_ = boost::thread(&TagSlam::TagPublisher, Available_Tag_,baseFrame_, tag_num_,worker_num_);
 
 }
+//  Note that this request is sychrounous 
+//  consider whether move_base action server free state or not
+// void TagSlam::TagLocation(marvel_core::TagLocation::Request &req,
+// 						  marvel_core::TagLocation::Response &res)
+// {
+	
+
+
+	
+// }
 
 TagSlam::~TagSlam()
 {
@@ -143,10 +166,6 @@ void TagSlam::TagPublisher(string* Available_Tag_,string baseFrame,int tag_num,c
 			cout << "tagQueue : ";
 			for(int i=0;i<tag_num;i++)
 			{
-				//temp code for checking 
-				cout <<Available_Tag_[i];
-				cout << " pushed " ;
-				// end of temp
 				tagQue.push(Available_Tag_[i]);
 			}
 			cout << "parent thread queue fulling" << endl;
@@ -174,7 +193,6 @@ void TagSlam::WorkerThread(string baseFrame)
 	ros::Rate rate(10);
 	while(ros::ok())
 	{
-		// geometry_msgs::TransformStamped transformStamped;
 
 		rc_mutex.lock();
 		r_count++;
