@@ -108,7 +108,7 @@ private:
 	static void TagPublisher(string* Available_Tag_,string baseFrame,int tag_num_,const int worker_num);
 	static void WorkerThread(string baseFrame);
 
-	void TagLocation(marvel_core::TagLocation)
+	void TagLocation(marvel_core::TagLocation);
 };
 
 TagSlam::TagSlam(ros::NodeHandle& nh)
@@ -119,7 +119,7 @@ TagSlam::TagSlam(ros::NodeHandle& nh)
 	
 	cmd_pub_ = node_.advertise<geometry_msgs::Twist>("cmd_vel",10);
 	tag_pub = node_.advertise<marvel_core::DetectionTag>("tag_detector",10);
-	ros::ServiceServer service = node_.advertise("Location_On_Tag",this->TagLocation);
+	// ros::ServiceServer service = node_.advertise("Location_On_Tag",this->TagLocation);
 
 	// publish TF relation base_footprintf and camera  
 	tTFB_ = boost::thread(&TagSlam::CamTFB,baseFrame_,camFrame_,
