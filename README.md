@@ -11,11 +11,6 @@ and  'GeoGraphicLibError'
 
 
 ## file guide 
-
-    marvel Robot Configuration file : marvel_slam/launch/marvel_configuration.launch
-
-this file describe that odom ~ base_scan transform , BaseControl , imu , ydlidar info
-
     marvel AMCL file : marvelbot_2dnav/launch/amcl.launch
 this file describe that map to odom transform
 
