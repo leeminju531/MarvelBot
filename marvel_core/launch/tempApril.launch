@@ -50,9 +50,9 @@
   <node pkg="rviz" type="rviz" name="rviz" args = "-d $(find marvel_core)/rviz/tag_slam.rviz" />
 
 
-  <rosparam file="$(find marvel_core)/config/April_control.yaml" command="load" />
+ <!-- <rosparam file="$(find marvel_core)/config/April_control.yaml" command="load" />
   <node pkg="marvel_core" type ="main" name="main" output="screen"/>
-
+-->
 
 
 

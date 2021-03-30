@@ -90,7 +90,7 @@ void TagDetector::TagPublisher(string* Available_Tag_,string baseFrame,int tag_n
 			{
 				tagQue.push(Available_Tag_[i]);
 			}
-			cout << "parent thread queue fulling" << endl;
+			cout << "parent thread queue is fulled" << endl;
 			// que_mutex.unlock();
 
 			// publish detection tag msg
@@ -127,7 +127,7 @@ void TagDetector::WorkerThread(string baseFrame)
 			string tagFrame = tagQue.front();
 			tagQue.pop();
 			que_mutex.unlock();
-			cout << "checking frame : "<< tagFrame << endl;
+			
 			try
 			{
 				tfBuffer.lookupTransform(baseFrame,tagFrame,
@@ -140,6 +140,7 @@ void TagDetector::WorkerThread(string baseFrame)
 			msg_mutex.lock();
 			tag_msgs.tag.push_back(tagFrame);
 			msg_mutex.unlock();	
+			
 		}
 		else
 		{
